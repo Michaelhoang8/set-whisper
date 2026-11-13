@@ -17,6 +17,7 @@ const el = (tag, text) => {
 const pct = (value) => (value * 100).toFixed(2) + '%';
 function status(text) {
   $('status').textContent = text;
+  $('settings-status').textContent = text;
 }
 function controls() {
   for (const n of document.querySelectorAll('button,input,select,textarea')) n.disabled = busy;
@@ -75,12 +76,12 @@ function map(indexes = []) {
   if (!filter) return;
   const root = $('map'),
     cells = Math.min(256, filter.m),
-    columns = 16,
+    columns = 64,
     rows = Math.ceil(cells / columns),
     step = filter.m / cells,
     highlight = new Set(indexes.map((i) => Math.floor(i / step)));
   root.replaceChildren();
-  root.setAttribute('viewBox', `0 0 320 ${rows * 20}`);
+  root.setAttribute('viewBox', `0 0 1280 ${rows * 20}`);
   for (let i = 0; i < cells; i++) {
     let set = 0;
     for (let bit = i * step; bit < (i + 1) * step; bit++)
@@ -106,7 +107,7 @@ function map(indexes = []) {
     `${cells} cells · ${step} bit${step === 1 ? '' : 's'} per cell. Brighter cells have more set bits. Outlines locate the selected query.`;
   $('positions').textContent = indexes.length
     ? `Selected hash positions: ${indexes.join(', ')}`
-    : 'Select a query below to locate its hash positions.';
+    : 'Select a query above to locate its hash positions.';
 }
 function render() {
   $('results').hidden = false;
@@ -300,5 +301,7 @@ $('file').addEventListener('change', async () => {
     $('file').value = '';
   }
 });
+$('settings-open').addEventListener('click', () => $('settings').showModal());
+$('settings-close').addEventListener('click', () => $('settings').close());
 $('source').value = fixture().join('\n');
 build();

@@ -4,6 +4,8 @@ A local Bloom-filter workbench with real packed bits, exact reference-set compar
 
 ![Set Whisper](docs/workbench.png)
 
+Membership queries and exact reference results occupy the main workspace. Select a result to highlight its hash positions in the bit strip. Filter settings opens the source list, capacity, and hash-count controls.
+
 ## Run
 
 Requires Python 3.10+. No runtime dependencies or API keys.
