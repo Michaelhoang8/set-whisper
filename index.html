@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Set Whisper</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <a href="#">set whisper <span>∴</span></a
+        ><span>PROBABILISTIC STRUCTURES / 01</span
+        ><label class="upload">Open filter<input id="file" type="file" accept=".json" /></label>
+      </header>
+      <section class="hero">
+        <p class="eyebrow">A SMALL MEMORY. AN HONEST MAYBE.</p>
+        <h1>Some answers<br />need an asterisk.</h1>
+        <p>A Bloom filter can rule an item out.<br />A positive answer asks you to look closer.</p>
+      </section>
+      <section class="configuration">
+        <label
+          >Filter size<select id="m">
+            <option>64</option>
+            <option>256</option>
+            <option>1024</option>
+            <option selected>4096</option>
+            <option>16384</option>
+            <option>65536</option>
+            <option>1048576</option></select
+          ><small>bits</small></label
+        ><label
+          >Positions per item<input
+            id="k"
+            type="number"
+            min="1"
+            max="16"
+            step="1"
+            value="6" /></label
+        ><button id="recommend">Suggest hash count</button
+        ><button id="build" class="primary">Build filter ↗</button
+        ><button id="cancel" disabled>Cancel</button>
+      </section>
+      <details>
+        <summary>Source items <span id="source-count">500 synthetic catalog keys</span></summary>
+        <p>
+          One item per line. Empty lines are ignored; duplicates are removed. Spaces, case, and
+          Unicode forms remain distinct. Data stays in this browser.
+        </p>
+        <textarea id="source" rows="7" aria-label="Source items" spellcheck="false"></textarea
+        ><button id="sample">Load 500 catalog keys</button>
+      </details>
+      <p id="status" role="status" aria-live="polite"></p>
+      <section id="results" hidden>
+        <div class="metrics">
+          <div>
+            <span>Packed filter</span><strong id="bytes">—</strong
+            ><small>bytes, excluding file metadata</small>
+          </div>
+          <div>
+            <span>Occupied bits</span><strong id="occupancy">—</strong><small id="bitcount"></small>
+          </div>
+          <div>
+            <span>Approximate false-positive rate</span><strong id="estimate">—</strong
+            ><small>idealized model, not a guarantee</small>
+          </div>
+        </div>
+        <div class="analysis">
+          <section class="map-panel">
+            <h2>A trace in the bits</h2>
+            <svg id="map" role="img" aria-label="Bloom filter occupancy map"></svg>
+            <p id="map-note"></p>
+            <p id="positions"></p>
+          </section>
+          <section class="query-panel">
+            <h2>Ask the filter</h2>
+            <textarea id="queries" rows="4" aria-label="Membership queries" spellcheck="false">
+catalog/item-0001
+catalog/item-0500
+catalog/item-9999</textarea
+            >
+            <div class="buttons">
+              <button id="query">Check membership</button
+              ><button id="probe">Probe 1,000 absent keys</button>
+            </div>
+            <p id="truth-note"></p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Query</th>
+                    <th>Filter says</th>
+                    <th>Reference set</th>
+                  </tr>
+                </thead>
+                <tbody id="answers"></tbody>
+              </table>
+            </div>
+            <p id="answer-note"></p>
+            <div id="experiment" hidden>
+              <h3>Measured false positives</h3>
+              <strong id="observed"></strong>
+              <p id="probe-note"></p>
+              <button id="false-example" hidden>Inspect a false positive</button>
+            </div>
+          </section>
+        </div>
+        <div class="exports">
+          <button id="save">Save filter JSON</button
+          ><button id="report">Export analysis JSON</button>
+        </div>
+      </section>
+      <details class="notes">
+        <summary>The contract behind “probably”</summary>
+        <p>
+          Inserted items never test negative when the filter is intact and queried with the same
+          encoding and hash scheme. Other items can test positive. The filter cannot enumerate its
+          members or delete individual items safely.
+        </p>
+        <p>
+          Keys use exact UTF-8 bytes. A SHA-256 digest supplies two 32-bit values; the second
+          becomes an odd step. Position i is (a + i × step) modulo the power-of-two bit count. The
+          model estimate is (1 − exp(−kn/m))^k and is only an approximation for this double-hashing
+          implementation.
+        </p>
+        <p>
+          The absent-key experiment uses a fixed synthetic probe sequence, excluding every
+          reference-set member. Its measured rate describes those probes. Imported filters have no
+          exact reference set, so their membership truth and absent-key experiments are unavailable.
+        </p>
+        <p>
+          Exported files include a checksum for accidental corruption. It is not authentication or
+          privacy protection: anyone holding the filter can test candidate keys. The original keys
+          are not included in the filter file.
+        </p>
+      </details>
+      <footer>PACKED BITS. VISIBLE TRADEOFFS. NO UPLOADS.</footer>
+    </main>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
